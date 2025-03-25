@@ -604,8 +604,13 @@
                 return;
             }
             var nowCount = object_count(bossData);
+            var last = 0;
+            for (var key in bossData) {
+                var tmp_i = bossData[key]["index"];
+                if(tmp_i > last)last = tmp_i;
+            }
             var tmp_D = new Object;
-            tmp_D["index"]=nowCount+1;
+            tmp_D["index"]= last+1;
             tmp_D["name"]=add_boss_name;
             tmp_D["rebornTime"]=add_boss_rebornTime;
             tmp_D["nextBorn"]="";
