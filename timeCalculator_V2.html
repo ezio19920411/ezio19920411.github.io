@@ -32,7 +32,70 @@
         /* border:solid 2px #666; */
         /* box-shadow: 0 0 10px #666; */
         }
+		.sidenav {
+			height: 100%;
+			/* 100% Full-height */
+			width: 0;
+			/* 0 width - change this with JavaScript */
+			position: fixed;
+			/* Stay in place */
+			z-index: 1;
+			/* Stay on top */
+			top: 0;
+			right: 0;
+			background-color: #f2f2f2;
+			/* Black*/
+			overflow-x: hidden;
+			/* Disable horizontal scroll */
+			padding-top: 60px;
+			/* Place content 60px from the top */
+			transition: 0.4s;
+			/* 0.5 second transition effect to slide in the sidenav */
+		}
 
+		/* The navigation menu links */
+
+		.sidenav a {
+			padding: 8px 8px 8px 32px;
+			text-decoration: none;
+			font-size: 15px;
+			color: #818181;
+			display: block;
+			transition: 0.3s
+		}
+
+		/* When you mouse over the navigation links, change their color */
+
+		.sidenav a:hover,
+		.offcanvas a:focus {
+			color: #ff3300;
+			cursor: pointer!important;
+		}
+
+		/* Position and style the close button (top right corner) */
+
+		.sidenav .closebtn {
+			position: absolute;
+			top: 0;
+			right: 25px;
+			font-size: 36px;
+			margin-right: 50px;
+		}
+		#main {
+			transition: margin-right .5s;
+			padding: 20px;
+		}
+
+		/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+
+		@media screen and (max-height: 450px) {
+			.sidenav {
+				padding-top: 15px;
+			}
+			.sidenav a {
+				font-size: 18px;
+			}
+		}
     </style>
 	<script>
         var bossData = new Object();
@@ -50,6 +113,7 @@
         var nowGroup = "all";
         var warn_min = 0.5;//warning min
         var voiceLang = "zh-tw";//念的語系
+        var navStatus = false;
 		function init() {
             bossData["1"]={"index":"1","name":"凱索斯(絕望廢墟)","rebornTime":"600","nextBorn":"","killTime":"0.2","lastPlace":"","bossPlace":"左|右|下","passCount":0};
             bossData["timestamp"]="";
@@ -800,35 +864,65 @@
                 synth.speak(utterThis);
             }
         }
+        function openNav() {
+            navStatus = true;
+            document.getElementById("mySidenav").style.width = "50%";
+            // document.getElementById("main").style.marginRight = "0%";
+        }
+
+        /* Set the width of the side navigation to 0 and the left margin of the page content to 0 */
+        function closeNav() {
+            navStatus = false;
+            document.getElementById("mySidenav").style.width = "0";
+            // document.getElementById("main").style.marginRight = "0";
+        }
+
+        function navActive() {
+            if (navStatus) closeNav();
+            else openNav();
+        }
 	</script>
 </head>
 
 <body onload="init();" style="height:100%;">
-    <div class="row">
-        <div class="col-sm-4">
-            <div class="panel panel-default" >
-                <div class="panel-heading">
-                    現在時間 : <h3 id="text_now_time"></h3>
-                    <ul class="nav nav-tabs" id="group_div" ></ul>
-                </div>
-                <button type="button" class="btn btn-default" onclick="doCopy('show_fast_view')">
-                    <span class="glyphicon glyphicon-duplicate"></span> Copy Top List
-                </button>
-                <button type="button" class="btn btn-default" onclick="doCopy('show_view')">
-                    <span class="glyphicon glyphicon-duplicate"></span> Copy All List
-                </button>
-                <button type="button" class="btn btn-default" onclick="warningSW()" >
-                    <span class="glyphicon glyphicon-volume-off" id="warnPic" ></span>
-                    <span id="warnText" >Warning Off</span>
-                </button>
-                <button type="button" class="btn btn-default" onclick="resetAllTime()"  style="display:none">
-                    <span class="glyphicon glyphicon-retweet" id="warnPic" ></span> Reset All time
-                </button>
+    <div id="main" class="row">
+        <div class="row">
+            <div class="col-sm-8">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        現在時間 : <h3 id="text_now_time"></h3>
+                        <ul class="nav nav-tabs" id="group_div"></ul>
+                    </div>
+                    <button type="button" class="btn btn-default" onclick="doCopy('show_fast_view')">
+                        <span class="glyphicon glyphicon-duplicate"></span> Copy Top List
+                    </button>
+                    <button type="button" class="btn btn-default" onclick="doCopy('show_view')">
+                        <span class="glyphicon glyphicon-duplicate"></span> Copy All List
+                    </button>
+                    <button type="button" class="btn btn-default" onclick="warningSW()">
+                        <span class="glyphicon glyphicon-volume-off" id="warnPic"></span>
+                        <span id="warnText">Warning Off</span>
+                    </button>
+                    <button type="button" class="btn btn-default" onclick="navActive()" id="navbarName">☰ 設定</button>
+                    <button type="button" class="btn btn-default" onclick="resetAllTime()" style="display:none">
+                        <span class="glyphicon glyphicon-retweet" id="warnPic"></span> Reset All time
+                    </button>
 
-                <div id= "show_fast_view" style="margin:20px"></div>
+                    <div id="show_fast_view" style="margin:20px"></div>
+                </div>
             </div>
         </div>
-        <div class="col-sm-6" >
+        <div class="row">
+            <div id="btn_view" style="" class="col-lg-8 btn-group"></div>
+        </div>
+        <div class="row">
+            <div class="panel panel-default col-lg-4" id="show_view"></div>
+        </div>
+    </div>
+
+    <div id="mySidenav" class="sidenav">
+        <button type="button" class="btn btn-default" onclick="navActive()" id="navbarName">X 關閉</button>
+        <div class="col-sm-10">
             <div class="">
                 <h3>設定時間</h3>
                 <table class="table">
@@ -840,147 +934,126 @@
                             </th>
                             <th>
                                 最後位置:
-                                <select class="form-control" id="place_select" ></select>
+                                <select class="form-control" id="place_select"></select>
                             </th>
                             <th><button type="button" class="btn btn-success" onclick="editBossTime()">修改</button></th>
-                          </tr>
-                      </thead>
+                        </tr>
+                    </thead>
                 </table>
 
 
                 <table class="table">
                     <thead>
-                      <tr>
-                        <th>Year</th>
-                        <th>Mon</th>
-                        <th>Day</th>
-                        <th>Hr</th>
-                        <th>Min</th>
-                        <th>Sec</th>
-                      </tr>
+                        <tr>
+                            <th>Year</th>
+                            <th>Mon</th>
+                            <th>Day</th>
+                            <th>Hr</th>
+                            <th>Min</th>
+                            <th>Sec</th>
+                        </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td><input type="text" class="form-control" id="time_YYYY"></td>
-                        <td><input type="text" class="form-control" id="time_Mon"></td>
-                        <td><input type="text" class="form-control" id="time_DD"></td>
-                        <td><input type="text" class="form-control" id="time_HH"></td>
-                        <td><input type="text" class="form-control" id="time_MM"></td>
-                        <td><input type="text" class="form-control" id="time_SS" placeholder="000"></td>
-                      </tr>
+                        <tr>
+                            <td><input type="text" class="form-control" id="time_YYYY"></td>
+                            <td><input type="text" class="form-control" id="time_Mon"></td>
+                            <td><input type="text" class="form-control" id="time_DD"></td>
+                            <td><input type="text" class="form-control" id="time_HH"></td>
+                            <td><input type="text" class="form-control" id="time_MM"></td>
+                            <td><input type="text" class="form-control" id="time_SS" placeholder="000"></td>
+                        </tr>
                     </tbody>
                 </table>
+                <div class="">
+                    <h3>新增資料</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    BOSS名稱:
+                                    <input type="text" class="form-control" id="add_boss_name">
+                                </th>
+                                <th>
+                                    出生位置:(範例: 上|中|下 )
+                                    <input type="text" class="form-control" id="add_boss_place">
+                                </th>
+                                <th>
+                                    重生時間:(單位分鐘)
+                                    <input type="text" class="form-control" placeholder="0" id="add_boss_rebornTime">
+                                </th>
+                                <th>
+                                    修正時間:(單位分鐘)
+                                    <input type="text" class="form-control" placeholder="0" id="add_boss_killTime">
+                                </th>
+                                <th>
+                                    群組:
+                                    <input type="text" class="form-control" id="add_boss_group">
+                                </th>
+                                <th><button type="button" class="btn btn-success" onclick="addBossData()">新增</button></th>
+                            </tr>
+                        </thead>
+                    </table>
 
-            </div>
-
-            <div style="display:none;">
-                <div class="input-group">
-                    <span class="input-group-addon">Text</span>
-                    <input id="msg_text" type="text" class="form-control" name="msg" placeholder="Data is here">
+                    <h3>修改/刪除資料</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    BOSS名稱:
+                                    <select class="form-control" id="modify_boss_select" onchange="modify_boss_select()"></select>
+                                </th>
+                                <th><button type="button" class="btn btn-warning" onclick="modifyBossTime()">修改</button></th>
+                                <th><button type="button" class="btn btn-danger" onclick="deleteBossTime()">刪除</button></th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>名稱</th>
+                                <th>出生位置</th>
+                                <th>重生時間</th>
+                                <th>修正時間</th>
+                                <th>群組</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="text" class="form-control" id="modify_boss_name"></td>
+                                <td><input type="text" class="form-control" id="modify_boss_place"></td>
+                                <td><input type="text" class="form-control" id="modify_boss_rebornTime"></td>
+                                <td><input type="text" class="form-control" id="modify_boss_killTime" placeholder="0"></td>
+                                <td><input type="text" class="form-control" id="modify_boss_group"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <h3>快速同步</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Year
+                                    <input type="text" class="form-control" placeholder="0" id="syc_time_YYYY">
+                                </th>
+                                <th>
+                                    Mon
+                                    <input type="text" class="form-control" placeholder="0" id="syc_time_Mon">
+                                </th>
+                                <th>
+                                    Day
+                                    <input type="text" class="form-control" placeholder="0" id="syc_time_DD">
+                                </th>
+                                <th>
+                                    時間 名稱(範例=>20:20:20 太平間)
+                                    <input type="text" class="form-control" id="fast_syc">
+                                </th>
+                                <th><button type="button" class="btn btn-success" onclick="sycBossData()">送出</button></th>
+                            </tr>
+                        </thead>
+                    </table>
                 </div>
-                <button type="button" class="btn btn-info" onclick="getBossData()">匯出資料</button>
-                <button type="button" class="btn btn-warning" onclick="setBossData()">匯入資料</button>
-                <button type="button" class="btn btn-default " onclick="doCopy('msg_text')">
-                    <span class="glyphicon glyphicon-copy"></span> Copy Text
-                </button>
             </div>
         </div>
-
-    </div>
-    <div class="row">
-        <div class="panel panel-default col-lg-4" id= "show_view"></div>
-        <div id="btn_view" style="" class="col-lg-8 btn-group"></div>
-        <div id="" style="" class="col-lg-6">
-            <div class="">
-                <h3>新增資料</h3>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>
-                                BOSS名稱:
-                                <input type="text" class="form-control" id="add_boss_name">
-                            </th>
-                            <th>
-                                出生位置:(範例: 上|中|下 )
-                                <input type="text" class="form-control" id="add_boss_place">
-                            </th>
-                            <th>
-                                重生時間:(單位分鐘)
-                                <input type="text" class="form-control" placeholder="0" id="add_boss_rebornTime">
-                            </th>
-                            <th>
-                                修正時間:(單位分鐘)
-                                <input type="text" class="form-control" placeholder="0" id="add_boss_killTime">
-                            </th>
-                            <th>
-                                群組:
-                                <input type="text" class="form-control" id="add_boss_group">
-                            </th>
-                            <th><button type="button" class="btn btn-success" onclick="addBossData()">新增</button></th>
-                          </tr>
-                      </thead>
-                </table>
-
-                <h3>修改/刪除資料</h3>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>
-                                BOSS名稱:
-                                <select class="form-control" id="modify_boss_select" onchange="modify_boss_select()"></select>
-                            </th>
-                            <th><button type="button" class="btn btn-warning" onclick="modifyBossTime()">修改</button></th>
-                            <th><button type="button" class="btn btn-danger" onclick="deleteBossTime()">刪除</button></th>
-                          </tr>
-                      </thead>
-                </table>
-                <table class="table">
-                    <thead>
-                      <tr>
-                        <th>名稱</th>
-                        <th>出生位置</th>
-                        <th>重生時間</th>
-                        <th>修正時間</th>
-                        <th>群組</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td><input type="text" class="form-control" id="modify_boss_name"></td>
-                        <td><input type="text" class="form-control" id="modify_boss_place"></td>
-                        <td><input type="text" class="form-control" id="modify_boss_rebornTime"></td>
-                        <td><input type="text" class="form-control" id="modify_boss_killTime" placeholder="0"></td>
-                        <td><input type="text" class="form-control" id="modify_boss_group"></td>
-                      </tr>
-                    </tbody>
-                </table>
-                <h3>快速同步</h3>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>
-                                Year
-                                <input type="text" class="form-control" placeholder="0" id="syc_time_YYYY">
-                            </th>
-                            <th>
-                                Mon
-                                <input type="text" class="form-control" placeholder="0" id="syc_time_Mon">
-                            </th>
-                            <th>
-                                Day
-                                <input type="text" class="form-control" placeholder="0" id="syc_time_DD">
-                            </th>
-                            <th>
-                                時間 名稱(範例=>20:20:20 太平間)
-                                <input type="text" class="form-control" id="fast_syc">
-                            </th>
-                            <th><button type="button" class="btn btn-success" onclick="sycBossData()">送出</button></th>
-                          </tr>
-                      </thead>
-                </table>
-            </div>
-        </div>
-    </div>
     </div>
     <div id="copy_area"></div>
     <audio id="ring_audio1">
